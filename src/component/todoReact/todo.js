@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import "./style.css";
 
-const getLocalData =()=>{
+const getLocalData = () => {
 
-    const  lists=localStorage.getItem("mytodolist");
-    if(lists){
+    const lists = localStorage.getItem("mytodolist");
+    if (lists) {
         return JSON.parse(lists)
     }
     else {
@@ -15,11 +15,30 @@ const getLocalData =()=>{
 const Todo = () => {
     const [inputdata, setInputData] = useState("");
     const [items, setItems] = useState(getLocalData());
+    const [isEditItem, setIsEditItem] = useState("");
+    const [toggleButton, setToggleButton] = useState(false);
 
     const addItem = () => {
         if (!inputdata) {
 
             alert("pls fill the data")
+        }
+        else if (inputdata && toggleButton) {
+            setItems(
+                items.map((curlElem) => {
+                    if (curlElem.id === isEditItem) {
+                        return {
+                            ...curlElem, name: inputdata
+                        }
+
+                    }
+                    return curlElem;
+
+                })
+            )
+            setInputData("");
+            setIsEditItem(null);
+            setToggleButton(false);
         }
         else {
             const myNewInputData = {
@@ -31,6 +50,20 @@ const Todo = () => {
         }
 
     }
+
+    // edit the item
+
+    const editItem = (index) => {
+        const item_todo_edited = items.find((curlElem) => {
+            return curlElem.id === index;
+        });
+        setInputData(item_todo_edited.name);
+        setIsEditItem(index);
+        setToggleButton(true);
+
+
+    };
+
 
     const deleteItem = (index) => {
         const updatedItems = items.filter((curlElem) => {
@@ -45,9 +78,9 @@ const Todo = () => {
     }
 
     useEffect(() => {
-             localStorage.setItem("mytodolist",JSON.stringify(items))
-    },[items]);
-    
+        localStorage.setItem("mytodolist", JSON.stringify(items))
+    }, [items]);
+
 
     return (
         <div className='main-div' >
@@ -65,7 +98,15 @@ const Todo = () => {
                         onChange={(event) => setInputData(event.target.value)}
 
                     />
-                    <i className="fa solid fa-plus add-btn" onClick={addItem} ></i>
+
+                    {toggleButton ? (
+                        <i className="far  fa-edit add-btn" onClick={addItem} >
+
+                        </i>) : (
+                        <i className="fa fa-plus add-btn" onClick={addItem} >
+
+                        </i>
+                    )}
                 </div>
 
                 {/* {Show Our Item} */}
@@ -81,8 +122,14 @@ const Todo = () => {
                                     {curlElem.name}
                                 </h3>
                                 <div className='todo-btn'>
-                                    <i className="far solid fa-edit add-btn" ></i>
-                                    <i className="far solid fa-trash-alt add-btn"
+                                    <i
+                                        className="far fa-edit add-btn"
+                                        onClick={() => editItem(curlElem.id)
+                                        }
+                                    >
+
+                                    </i>
+                                    <i className="far  fa-trash-alt add-btn"
                                         onClick={() => deleteItem(curlElem.id)}
                                     ></i>
                                 </div>
