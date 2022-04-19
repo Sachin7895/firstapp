@@ -35,7 +35,7 @@ const Todo = () => {
                     return curlElem;
 
                 })
-            )
+            );
             setInputData("");
             setIsEditItem(null);
             setToggleButton(false);
@@ -146,7 +146,7 @@ const Todo = () => {
                     <button
                         className='btn effect04'
                         data-sm-link-text="Remove All"
-                        onclick={removeAll}
+                        onClick={removeAll}
                     >
 
                         < span>
